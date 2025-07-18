@@ -65,22 +65,9 @@ source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 pip install -r requirements.txt
 ```
 
-### 3. API Keys Setup
+### 3. Weights & Biases (Optional):
 
-**Kaggle:**
-To download the dataset, you need your Kaggle API key.
-1.  Go to your Kaggle account settings and click "Create New Token" to download `kaggle.json`.
-2.  Place the `kaggle.json` file in the required location:
-    -   **Linux/macOS:** `~/.kaggle/kaggle.json`
-    -   **Windows:** `C:\Users\<Your-Username>\.kaggle\kaggle.json`
-
-**Weights & Biases (Optional):**
 If you want to use W&B for logging (`WANDB_ENABLED = True` in `src/config.py`), you'll need to log in. The first time you run the training script, you will be prompted to enter your API key.
-
-```bash
-# You can also log in manually beforehand
-wandb login
-```
 
 ---
 
