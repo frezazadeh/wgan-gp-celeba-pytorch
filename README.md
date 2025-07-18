@@ -115,6 +115,4 @@ This will display a grid of newly generated faces and a grid showing a smooth tr
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Acknowledgments
-
--   This project is a refactored and enhanced version of the GAN course material by **Javier Ideami**.
 -   The implementation is based on the paper [Improved Training of Wasserstein GANs](https://arxiv.org/abs/1704.00028) by Gulrajani et al.
