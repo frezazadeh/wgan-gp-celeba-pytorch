@@ -54,8 +54,8 @@ Clone the repository and set up the environment.
 
 ```bash
 # Clone the project
-git clone [https://github.com/YOUR_USERNAME/wgan-gp-celeba.git](https://github.com/YOUR_USERNAME/wgan-gp-celeba.git)
-cd wgan-gp-celeba
+git clone https://github.com/frezazadeh/wgan-gp-celeba-pytorch.git
+cd wgan-gp-celeba-pytorch
 
 # Create and activate a virtual environment (recommended)
 python -m venv venv
