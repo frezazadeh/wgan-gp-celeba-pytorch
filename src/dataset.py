@@ -1,44 +1,50 @@
 import os
 import zipfile
 import kagglehub
-import torch
+import numpy as np
+from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from PIL import Image
+import torch
 
 from src.config import BATCH_SIZE, IMAGE_SIZE, DATASET_LIMIT, NUM_WORKERS
 
 class CelebADataset(Dataset):
-    """
-    Custom PyTorch Dataset for the CelebA dataset.
-    Handles loading images and applying transformations.
-    """
     def __init__(self, path: str, size: int = 128, limit: int = None):
+        """
+        Initializes the dataset. The transform pipeline is removed from here
+        and implemented manually in __getitem__.
+        """
         self.path = path
-        self.size = (size, size)
+        self.sizes = (size, size)
         
         all_files = [os.path.join(path, f) for f in os.listdir(path) if f.lower().endswith('.jpg')]
-        self.items = all_files[:limit] if limit is not None else all_files
+        self.items = all_files[:limit] if limit else all_files
 
-        # Transformation pipeline to resize, convert to tensor, and normalize to [-1, 1]
-        self.transform = transforms.Compose([
-            transforms.Resize(self.size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-        ])
-        
-    def __len__(self) -> int:
+    def __len__(self):
         return len(self.items)
 
-    def __getitem__(self, idx: int) -> torch.Tensor:
-        img_path = self.items[idx]
-        img = Image.open(img_path).convert('RGB')
-        return self.transform(img)
+    def __getitem__(self, idx):
+        """
+        Loads an image, processes it manually, and scales it to [0, 1].
+        This method reverts to the notebook's original normalization.
+        """
+        # Load image and resize
+        img = Image.open(self.items[idx]).convert('RGB')
+        img_resized = transforms.Resize(self.sizes)(img)
+        
+        # Convert to NumPy array and transpose dimensions from (H, W, C) to (C, H, W)
+        arr = np.transpose(np.asarray(img_resized), (2, 0, 1)).astype(np.float32)
+        
+        # Convert to a PyTorch tensor and scale pixel values to the [0, 1] range
+        tensor = torch.from_numpy(arr).div(255)
+        
+        return tensor
 
 def get_celeba_dataloader() -> DataLoader:
     """
     Downloads, extracts, and prepares the CelebA dataset.
-    Returns a PyTorch DataLoader for training.
+    Returns a PyTorch DataLoader.
     """
     print("[INFO] Downloading CelebA dataset via KaggleHub...")
     dataset_dir = kagglehub.dataset_download("jessicali9530/celeba-dataset")
@@ -51,7 +57,7 @@ def get_celeba_dataloader() -> DataLoader:
             img_path = root
             break  # Stop searching once images are found
 
-    # Handle extraction if the image directory isn't found directly
+    # Handle extraction if the directory isn't found directly
     zip_path = os.path.join(dataset_dir, 'img_align_celeba.zip')
     if img_path is None and os.path.isfile(zip_path):
         print(f"[INFO] Extracting images from {zip_path}...")
@@ -63,10 +69,9 @@ def get_celeba_dataloader() -> DataLoader:
                 img_path = root
                 break
 
-    # Raise an error if no images are found after all checks
     if img_path is None:
         raise FileNotFoundError(f"Could not find any .jpg images within the dataset directory: {dataset_dir}")
-
+    
     print(f"[INFO] Using image directory: {img_path}")
     
     # Create dataset and dataloader
