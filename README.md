@@ -2,8 +2,6 @@
 
 This project is a PyTorch implementation of a Wasserstein GAN with Gradient Penalty (WGAN-GP) designed to generate high-resolution celebrity faces from the CelebA dataset. The architecture is based on Deep Convolutional GANs (DCGANs).
 
-This repository refactors the original [Google Colab notebook by Javier Ideami](https://colab.research.google.com/drive/11rmZGb1qvyddLSmqBuLMn8fC87nmmwSc) into a structured, professional, and easily maintainable Python project.
-
 ![Latent Space Morphing](https://i.imgur.com/uQAmIS4.gif)
 *(Example of latent space interpolation)*
 
