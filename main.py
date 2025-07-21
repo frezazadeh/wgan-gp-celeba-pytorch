@@ -16,9 +16,10 @@ def run_training():
     generator = Generator(z_dim=Z_DIM).to(DEVICE)
     critic = Critic().to(DEVICE)
 
-    # Initialize weights
-    generator.apply(initialize_weights)
-    critic.apply(initialize_weights)
+    # --- Weight initialization is currently disabled ---
+    # Uncomment the following lines to apply custom init:
+    # generator.apply(initialize_weights)
+    # critic.apply(initialize_weights)
 
     # Initialize optimizers
     gen_optimizer = optim.Adam(generator.parameters(), lr=LEARNING_RATE, betas=(BETA_1, BETA_2))
