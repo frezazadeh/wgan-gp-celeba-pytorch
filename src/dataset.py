@@ -23,8 +23,7 @@ class Dataset(Dataset):
         data = PIL.Image.open(self.items[idx]).convert('RGB') # (178,218)
         data = np.asarray(torchvision.transforms.Resize(self.sizes)(data)) # 128 x 128 x 3
         data = np.transpose(data, (2,0,1)).astype(np.float32, copy=False) # 3 x 128 x 128 # from 0 to 255
-        data = torch.from_numpy(data).div(255) # from 0 to 1
-        data = data.mul(2.0).sub(1.0)
+        data = torch.from_numpy(data).div(255)
         return data
 
 
