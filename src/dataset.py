@@ -1,7 +1,8 @@
 import os
-from PIL import Image
+import PIL
 import numpy as np
 import torch
+import torchvision
 import torchvision.transforms as T
 from torch.utils.data import Dataset, DataLoader
 
@@ -19,16 +20,12 @@ class Dataset(Dataset):
         return len(self.items)
 
     def __getitem__(self, idx):
-        # Load and resize image
-        img = Image.open(self.items[idx]).convert('RGB')  # PIL Image (H,W,C)
-        img = T.Resize(self.sizes)(img)                  # PIL Image 128x128
-        # Convert to numpy array and reorder axes to C×H×W
-        arr = np.asarray(img, dtype=np.float32)          # H×W×C in float32
-        arr = arr.transpose((2, 0, 1))                   # C×H×W
-        # Scale to [0,1]
-        tensor = torch.from_numpy(arr).div(255)
-        tensor = tensor * 2.0 - 1.0
-        return tensor
+        data = PIL.Image.open(self.items[idx]).convert('RGB') # (178,218)
+        data = np.asarray(torchvision.transforms.Resize(self.sizes)(data)) # 128 x 128 x 3
+        data = np.transpose(data, (2,0,1)).astype(np.float32, copy=False) # 3 x 128 x 128 # from 0 to 255
+        data = torch.from_numpy(data).div(255) # from 0 to 1
+        data = data.mul(2.0).sub(1.0)
+        return data
 
 
 def get_celeba_dataloader() -> DataLoader:
